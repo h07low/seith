@@ -7,11 +7,15 @@ from seith_lib.utils import paths as seith_paths
 from seith_lib.command.default_conf_values import DEFAULT_CONF_DICT
 from config import DEPS_DIR, CONF_FILE_NAME
 
+#TODO if error print file 
 def parse_all_deps(conf_dir):
     configs = []
     for conf_file in Path(conf_dir+DEPS_DIR).glob("*.json"):
         with open(conf_file) as f:
-            j = json.load(f)
+            try:
+                j = json.load(f)
+            except:
+                print("the config file {} generated an error".format(conf_file))
             if isinstance(j, list):
                 configs+=j
             else:
@@ -24,7 +28,10 @@ def parse_all_deps(conf_dir):
 def parse_config(conf_dir):
     #TODO err manag
     with open(conf_dir+CONF_FILE_NAME) as f:
-        conf = json.load(f)
+        try:
+            conf = json.load(f)
+        except:
+            print('invalid json at conf.json')
     
     conf = DEFAULT_CONF_DICT | conf
 

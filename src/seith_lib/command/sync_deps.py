@@ -11,7 +11,10 @@ def sync_deps(args):
 
     # get container
     container = docker_utils.get_container(name)
-    # check running?
+    if container.status != 'running':
+        print('container is not running')
+        exit()
+        #TODO
 
     # copy scripts directory in docker 
     docker_utils.copy_folder_to_container(container, conf_dir+SCRIPTS_DIR, DEST_SCRIPTS)
@@ -35,12 +38,12 @@ def sync_deps(args):
             else:
                 to_install = conf["deps"]
 
-
         if conf["unique_install"] and not is_deps_dict:
             dep_list = conf["separator"].join(to_install)
             command = conf["install"].format(dep_list)
-            docker_utils.exec_on_container(container, command, True)
+            exit_code = docker_utils.exec_on_container(container, command, True)
         else:
+            exit_code = 0
             for dep in to_install:
                 if is_deps_dict:
                     attr = conf["deps"][dep]
@@ -48,9 +51,15 @@ def sync_deps(args):
                     attr = dep
 
                 command = conf["install"].format(attr)
-                docker_utils.exec_on_container(container, command, True)  #  change pos
-
-        a_metadata["installed_deps"][dep_name]+=to_install
+                e_code = docker_utils.exec_on_container(container, command, True)  #  change pos
+                if e_code != 0:
+                    exit_code = e_code
+                
+        
+        if exit_code != 0:
+            print('An error has occured during install of {}'.format(dep_name))
+        else:
+            a_metadata["installed_deps"][dep_name]+=to_install
     
     # save metadata  
     metadata_utils.write_metadata(name, a_metadata)

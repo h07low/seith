@@ -39,7 +39,7 @@ def parse_metadata(name):
     if name in metadata:
         a_metadata = metadata[name]
     else:
-        a_metadata = {"installed_deps":{},"volumes":{}} 
+        a_metadata = {"conf_dir":"", "installed_deps":{},"volumes":{}} 
     
     return a_metadata
 

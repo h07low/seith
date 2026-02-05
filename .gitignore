@@ -1,14 +1,2 @@
 # Created by venv; see https://docs.python.org/3/library/venv.html
-*.swp
-*.swo
-
-__pycache__/
-pyvenv.cfg
-
-.venv/
-bin/
-lib/
-lib64
-include/
-
-.Ds_Store
+*

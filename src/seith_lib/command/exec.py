@@ -45,7 +45,7 @@ def run(args):
         current_path = Path().absolute()
         for src_dir in volumes:
             if current_path.as_posix().startswith(src_dir):
-                cwd = current_path.replace(src_dir, metadata["volumes"][src_dir], 1)
+                cwd = current_path.as_posix().replace(src_dir, metadata["volumes"][src_dir], 1)
                 break
         if not cwd:
             cwd = '/seith_temp' # TODO add to config

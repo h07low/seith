@@ -22,28 +22,28 @@ def get_container(name):
 
 def exec_on_container(container, command, output=False):
     bash_command = "bash -c {}".format(shlex.quote(command))  # TODO custom shell other than bash
-    
-    if not output:
-        return container.exec_run(bash_command,
-                       stdout=True,
-                       stderr=True,
-                       stdin=False,
-                       tty=False,
-                       workdir=DEST_SCRIPTS,
-                       stream=True
-                       )
-    else:
-        e, out = container.exec_run(bash_command,
-                       stdout=True,
-                       stderr=True,
-                       stdin=False,
-                       tty=False,
-                       workdir=DEST_SCRIPTS,
-                       stream=True
-                       )
 
-        for o in out:
-            print(o)
+    exec_instance = client.api.exec_create(
+        container.id,
+        bash_command,
+        workdir=DEST_SCRIPTS,
+        privileged=True,
+        tty=False,
+        user='root' 
+    )
+
+    exec_output = client.api.exec_start(
+        exec_instance['Id'],
+        tty=False,
+        stream=output,
+    )
+    
+    for o in exec_output:
+        print(o.decode(), end='')
+
+    exec_inspect = client.api.exec_inspect(exec_instance['Id'])
+    exit_code = exec_inspect['ExitCode']
+    return exit_code
 
 
 def copy_folder_to_container(container, src_path, dest_path):
