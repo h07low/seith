@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seith"
+version = "0.1.0"
+description = "Seith CLI tool"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+	"docker"
+]
+authors = [
+    {name = "h07low"}
+]
+
+[project.scripts]
+seith = "seith:main"

@@ -6,6 +6,7 @@ from seith_lib.commands import commands as seith_commands
 
 logger = logging.getLogger(__name__)
 
+#TODO
 def log():
     logging.basicConfig(filename='myapp.log', level=logging.INFO)
     logger.info('Started')
@@ -35,7 +36,7 @@ def parse_args():
     '''
     parser = argparse.ArgumentParser(prog = 'seith', description='i cant explain TODO', epilog='GoodBye TODO')
 
-    subparser = parser.add_subparsers(help='actions')
+    subparser = parser.add_subparsers(help='actions', required=True)
     
     ## handle containers
     # create parser
@@ -86,8 +87,10 @@ def parse_args():
 
     return args
 
-if __name__=="__main__":
-    # TODO
+def main():
     args = parse_args()
     
     args.func(args)
+
+if __name__=="__main__":
+    main()
