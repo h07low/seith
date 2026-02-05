@@ -5,6 +5,13 @@ layer between docker and cli to better handle your container
 - specify package to install and automatically install and upgrade them all
 - automatically translates your CWD using volumes
 
+## Install
+using pipx
+```
+pipx install git+https://github.com/h07low/seith.git
+```
+
+
 ## example usage
 ### create
 create a new container ( if no conf_dir is specified seith tries to access XDG_CONFIG_HOME/seith/<container_name> )
