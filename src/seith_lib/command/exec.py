@@ -28,7 +28,6 @@ def run(args):
         command
     '''
     command = "{0} -c {1}".format(args.shell, shlex.quote(" ".join(args.command)))
-    print(command)
 
     
     container = docker_utils.get_container(args.container)
@@ -50,9 +49,6 @@ def run(args):
         if not cwd:
             cwd = '/seith_temp' # TODO add to config
     
-    print(cwd)
-
-      
 
     env = json.loads(args.env)
 
