@@ -1,4 +1,4 @@
-# seith - handle your container
+# seith 
 layer between docker and cli to better handle your container
 
 ## Feature
