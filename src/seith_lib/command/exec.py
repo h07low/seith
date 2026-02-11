@@ -27,7 +27,7 @@ def run(args):
         cwd
         command
     '''
-    command = "{0} -c {1}".format(args.shell, shlex.quote(" ".join(args.command)))
+    command = "{0} -lc {1}".format(args.shell, shlex.quote(" ".join(args.command)))
 
     
     container = docker_utils.get_container(args.container)
