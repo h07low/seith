@@ -38,12 +38,16 @@ def exec_on_container(container, command, output=False):
         stream=output,
     )
     
-    for o in exec_output:
-        print(o.decode(), end='')
+    if output:
+        for o in exec_output:
+            print(o.decode(), end='')
 
     exec_inspect = client.api.exec_inspect(exec_instance['Id'])
     exit_code = exec_inspect['ExitCode']
-    return exit_code
+    if output:
+        return exit_code, None
+    else:
+        return exit_code, exec_output
 
 
 def copy_folder_to_container(container, src_path, dest_path):

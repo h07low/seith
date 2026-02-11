@@ -38,10 +38,14 @@ def sync_deps(args):
             else:
                 to_install = conf["deps"]
 
+        if not to_install:
+            continue
+
         if conf["unique_install"] and not is_deps_dict:
             dep_list = conf["separator"].join(to_install)
             command = conf["install"].format(dep_list)
-            exit_code = docker_utils.exec_on_container(container, command, True)
+            print('installing: {}'.format(command))
+            exit_code, _ = docker_utils.exec_on_container(container, command, True)
         else:
             exit_code = 0
             for dep in to_install:
@@ -51,7 +55,8 @@ def sync_deps(args):
                     attr = dep
 
                 command = conf["install"].format(attr)
-                e_code = docker_utils.exec_on_container(container, command, True)  #  change pos
+                print('installing: {}'.format(command))
+                e_code, _ = docker_utils.exec_on_container(container, command, True)  #  change pos
                 if e_code != 0:
                     exit_code = e_code
                 
