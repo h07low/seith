@@ -3,20 +3,27 @@ import shlex
 import termios, tty, sys, select, os   # needed for tty 
 from pathlib import Path
 
-from seith_lib.utils import docker_utils
-from seith_lib.utils import metadata_utils
+from seith_lib.utils import docker_utils, metadata_utils, utils
 
 
-def exec_on_container(container, command):
-    bash_command = "bash -c {}".format(shlex.quote(command))  # TODO custom shell other than bash
+def auto_encode(commands):
+    final_command=[]
+    for c in commands:
+        if c.isalnum():  # no special chars
+            final_command.append(c)
 
-    return container.exec_run(bash_command,
-                       stdout=True,
-                       stderr=True,
-                       stdin=False,
-                       tty=True,
-                       workdir=DEST_SCRIPTS
-                       )
+        elif c[0]=="'" or c[0]=='"':  # already embedded in quotes
+            # its ok
+            final_command.append(c)
+
+        elif c[0].isalnum():
+            final_command.append("'"+c+"'")
+        
+        else:
+            final_command.append(c)
+
+    return final_command
+        
 
 def run(args):
     '''
@@ -27,7 +34,14 @@ def run(args):
         cwd
         command
     '''
-    command = "{0} -lc {1}".format(args.shell, shlex.quote(" ".join(args.command)))
+    if args.encode == 'auto':
+        cmds = auto_encode(args.command)
+    elif args.encode == 'all':
+        cmds = [shlex.quote(i) for i in args.command]
+    else:
+        cmds = args.command
+
+    command = "{0} -lc {1}".format(args.shell, shlex.quote(" ".join(cmds)))
 
     
     container = docker_utils.get_container(args.container)
@@ -36,16 +50,10 @@ def run(args):
         print('container not running')
         exit() #TODO manage
 
-    # TODO calculate CWD
+    # calculate CWD
     cwd = args.cwd
     if not cwd:
-        metadata = metadata_utils.parse_metadata(args.container)
-        volumes = metadata["volumes"].keys()
-        current_path = Path().absolute()
-        for src_dir in volumes:
-            if current_path.as_posix().startswith(src_dir):
-                cwd = current_path.as_posix().replace(src_dir, metadata["volumes"][src_dir], 1)
-                break
+        cwd = utils.translate_cwd(args.container)
         if not cwd:
             cwd = '/seith_temp' # TODO add to config
     
