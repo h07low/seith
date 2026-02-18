@@ -7,6 +7,8 @@ import io
 
 from config import DEST_SCRIPTS
 
+from seith_lib.utils import utils
+
 
 client = docker.from_env()
 
@@ -20,13 +22,18 @@ def get_container(name):
 
     return container
 
-def exec_on_container(container, command, output=False):
+def exec_on_container(container, command, output=False, cwd=None): 
+    if cwd==None:
+        cwd = utils.translate_cwd(container.name)
+        if not cwd:
+            cwd = '/'
+
     bash_command = "bash -c {}".format(shlex.quote(command))  # TODO custom shell other than bash
 
     exec_instance = client.api.exec_create(
         container.id,
         bash_command,
-        workdir=DEST_SCRIPTS,
+        workdir=cwd,
         privileged=True,
         tty=False,
         user='root' 

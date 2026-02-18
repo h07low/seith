@@ -15,8 +15,17 @@ def docker_command(prefix, parsed_args, **kwargs):
     
     if not prefix:
         prefix = "''"
-    e, o = docker_utils.exec_on_container(c, 'compgen -f '+prefix) 
-    o = o.decode()
-    o = o.split('\n')
+    e1, dirs = docker_utils.exec_on_container(c, 'compgen -d '+prefix) 
+    e2, files = docker_utils.exec_on_container(c, 'compgen -f '+prefix) 
 
-    return set(o)
+    result = set()
+    # Add directories with trailing slash
+    for d in dirs.decode().split('\n'):
+        if d:
+            result.add(d + '/')
+    # Add files without trailing slash
+    for f in files.decode().split('\n'):
+        if f and not any(f == d.rstrip('/') for d in result):
+            result.add(f)
+
+    return result  

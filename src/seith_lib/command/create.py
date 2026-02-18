@@ -54,6 +54,9 @@ def create(args):
 
 def run(args):
     create(args)
+    print('it is suggested to run the following command (if you have installed the tool using pipx)')
+    print(f"cp /home/sigpwn/.local/bin/seith_exec /home/sigpwn/.local/bin/{args.container} && sed -i '1a # PYTHON_ARGCOMPLETE_OK' /home/sigpwn/.local/bin/{args.container}")
+    print()
 
 
 def add_dep(name, conf_dir):

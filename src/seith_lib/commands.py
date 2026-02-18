@@ -21,6 +21,7 @@ def exec_parser(parent_parser, name, help, func_name):
         parser = parent_parser
 
     parser.add_argument('--env', help='extra environment variable to pass to the command', default='{}')
+    parser.add_argument('--encode', help='how to encode the command (auto, all, none) (default=auto)', default='auto')
     parser.add_argument('--shell', help='specify shell to use (default=bash)', default='bash')
     parser.add_argument('--cwd', help='specify directory to use (default=/seith_temp)', default=None)
     parser.add_argument('--user', help='specify user to use (default=root)', default='root')
